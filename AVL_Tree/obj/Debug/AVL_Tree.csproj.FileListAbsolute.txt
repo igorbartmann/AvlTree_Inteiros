@@ -1,0 +1,9 @@
+C:\Users\Acer Aspire\Desktop\FACULDADE\Estrutura Avançada de Dados I\Trabalho Pratico GA (AVL)\AVL_Tree\obj\Debug\AVL_Tree.csproj.CoreCompileInputs.cache
+C:\Users\Acer Aspire\Desktop\FACULDADE\Estrutura Avançada de Dados I\Trabalho Pratico GA (AVL)\AVL_Tree\bin\Debug\AVL_Tree.exe.config
+C:\Users\Acer Aspire\Desktop\FACULDADE\Estrutura Avançada de Dados I\Trabalho Pratico GA (AVL)\AVL_Tree\bin\Debug\AVL_Tree.exe
+C:\Users\Acer Aspire\Desktop\FACULDADE\Estrutura Avançada de Dados I\Trabalho Pratico GA (AVL)\AVL_Tree\bin\Debug\AVL_Tree.pdb
+C:\Users\Acer Aspire\Desktop\FACULDADE\Estrutura Avançada de Dados I\Trabalho Pratico GA (AVL)\AVL_Tree\bin\Debug\System.ValueTuple.dll
+C:\Users\Acer Aspire\Desktop\FACULDADE\Estrutura Avançada de Dados I\Trabalho Pratico GA (AVL)\AVL_Tree\bin\Debug\System.ValueTuple.xml
+C:\Users\Acer Aspire\Desktop\FACULDADE\Estrutura Avançada de Dados I\Trabalho Pratico GA (AVL)\AVL_Tree\obj\Debug\AVL_Tree.csproj.CopyComplete
+C:\Users\Acer Aspire\Desktop\FACULDADE\Estrutura Avançada de Dados I\Trabalho Pratico GA (AVL)\AVL_Tree\obj\Debug\AVL_Tree.exe
+C:\Users\Acer Aspire\Desktop\FACULDADE\Estrutura Avançada de Dados I\Trabalho Pratico GA (AVL)\AVL_Tree\obj\Debug\AVL_Tree.pdb

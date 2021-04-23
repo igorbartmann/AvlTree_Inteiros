@@ -1,0 +1,455 @@
+﻿using System;
+using AVL_Tree.Structure.Interfaces;
+
+namespace AVL_Tree.Structure
+{
+    public class AVLTree : IAvlTree
+    {
+        #region Atributes
+        public Node Root { get; private set; }
+        #endregion
+
+        /// <summary>
+        /// Construtor da classe.
+        /// </summary>
+        public AVLTree() { }
+
+        /// <summary>
+        /// Construtor da classe, já adicionando um primeiro valor como raíz.
+        /// </summary>
+        /// <param name="element">Valor do primeiro elemento a ser inserido na árvore</param>
+        public AVLTree(int element)
+        {
+            this.Root = new Node(element);
+        }
+
+        /// <summary>
+        /// Alterar o valor da propriedade Root (raíz).
+        /// </summary>
+        /// <param name="root">Nova referência para o nodo raíz</param>
+        public void SetRoot(Node root)
+        {
+            this.Root = root;
+        }      
+
+        /// <summary>
+        /// Inserir elementos na árvore.
+        /// </summary>
+        /// <param name="element">Valor a ser inserido na árvore</param>
+        public void InsertNode(int element)
+        {
+            this.Root = InsertNode(this.Root, element);
+        }
+
+        /// <summary>
+        /// Inserir elementos na árvore (recursivo).
+        /// </summary>
+        /// <param name="node">Nodo raíz da árvore</param>
+        /// <param name="element">Valor a ser inserido na árvore</param>
+        /// <returns>Nova raíz da árvore com o nodo inserido</returns>
+        private Node InsertNode(Node node, int element)
+        {
+            if(node == null)
+            {
+                return new Node(element);
+            }
+            if (element < node.Element)
+            {
+                node.SetLeftNode(InsertNode(node.LeftNode, element));
+            }
+            else if (element > node.Element)
+            {
+                node.SetRightNode(InsertNode(node.RightNode, element));
+            }
+            else
+            {
+                return node;
+            }
+
+            return TreeBalanceToInsert(node, element);
+        }
+
+        /// <summary>
+        /// Buscar um elemento na árvore através do seu valor.
+        /// </summary>
+        /// <param name="element">Valor a ser buscado na árvore</param>
+        /// <returns>Nodo encontrado pela busca</returns>
+        public Node FindNode(int element)
+        {
+            return FindNode(this.Root, element);
+        }
+
+        /// <summary>
+        /// Buscar um elemento na árvore através do seu valor.
+        /// </summary>
+        /// <param name="node">Nodo atual analisado pela busca</param>
+        /// <param name="element">Valor a ser buscado na árvore</param>
+        /// <returns>Nodo encontrado pela busca</returns>
+        private Node FindNode(Node node, int element)
+        {
+            if (node == null || node.Element == element)
+            {
+                return node;
+            }
+            else if (element < node.Element)
+            {
+                return FindNode(node.LeftNode, element);
+            }
+            return FindNode(node.RightNode, element);
+        }
+
+        /// <summary>
+        /// Deletar um valor da árvore através do seu valor.
+        /// </summary>
+        /// <param name="element">Valor a ser deletado da árvore</param>
+        public void DeleteNode(int element)
+        {
+            this.Root = DeleteNode(this.Root, element);
+        }
+
+        /// <summary>
+        /// Deletar um nodo da árvore através do seu valor.
+        /// </summary>
+        /// <param name="node">Nodo atual analisado pelo método</param>
+        /// <param name="element">Valor a ser deletado da árvore</param>
+        /// <returns>Nova raíz da árvore com o nodo deletado</returns>
+        private Node DeleteNode(Node node, int element)
+        {
+            if (node == null)
+            {
+                return null;
+            }
+            if(element < node.Element)
+            {
+                node.SetLeftNode(DeleteNode(node.LeftNode, element));
+            }
+            else if(element > node.Element)
+            {
+                node.SetRightNode(DeleteNode(node.RightNode, element));
+            }
+            else
+            {
+                node = DeleteNodeAccordingChildren(node);
+            }
+
+            if(node == null)
+            {
+                return null;
+            }
+
+            return TreeBalanceToDelete(node);
+        }
+
+        /// <summary>
+        /// Efetuar rotação para a esquerda.
+        /// </summary>
+        /// <param name="node">Nodo base para a rotação</param>
+        /// <returns>Nodo com a rotação efetuada sobre ele</returns>
+        private Node LeftRotate(Node node)
+        {
+            Node x = node.RightNode;
+            Node T2 = x.LeftNode;
+            x.SetLeftNode(node);
+            node.SetRightNode(T2);
+            node.SetHeight(GetMaxHeight(node.LeftNode, node.RightNode));
+            x.SetHeight(GetMaxHeight(x.LeftNode, x.RightNode));
+            return x;
+        }
+
+        /// <summary>
+        /// Efetuar rotação para a direita.
+        /// </summary>
+        /// <param name="node">Nodo base para a rotação</param>
+        /// <returns>Nodo com a rotação efetuada sobre ele</returns>
+        private Node RightRotate(Node node)
+        {
+            Node x = node.LeftNode;
+            Node T2 = x.RightNode;
+            x.SetRightNode(node);
+            node.SetLeftNode(T2);
+            x.SetHeight(GetMaxHeight(x.LeftNode, x.RightNode));
+            node.SetHeight(GetMaxHeight(node.LeftNode, node.RightNode));
+            return x;
+        }
+
+        /// <summary>
+        /// Calcula o valor de balanceamento atual do nodo.
+        /// </summary>
+        /// <param name="node">Nodo sobre o qual o calculo será realizado</param>
+        /// <returns>Valor do balanceamento do nodo</returns>
+        private int NodeBalance(Node node)
+        {
+            if (node == null)
+            {
+                return 0;
+            }
+
+            return (node.LeftNode != null ? node.LeftNode.Height : 0) - (node.RightNode != null ? node.RightNode.Height : 0);
+        }
+
+        /// <summary>
+        /// Atualizar a altura e calcular o valor do balanceamento do nodo.
+        /// </summary>
+        /// <param name="node">Nodo a ser atualizado e sobre o qual o calculo será feito</param>
+        /// <returns>Nodo com a altura atualizada e o seu valor de balanceamento</returns>
+        private (Node, int) NodeBalanceAndUpdateHeight(Node node)
+        {
+            if (node == null)
+            {
+                return (null, 0);
+            }
+
+            int balanceValue = NodeBalance(node);
+            node.SetHeight(GetMaxHeight(node.LeftNode, node.RightNode));
+            return (node, balanceValue);
+        }
+
+        /// <summary>
+        /// Efetuar o balanceamento da árvore após inserção.
+        /// </summary>
+        /// <param name="nodeInput">Nodo base para o balanceamento</param>
+        /// <param name="element">Valor que se deseja inserir na árvore</param>
+        /// <returns>Árvore balanceada a partir do nodo informado</returns>
+        private Node TreeBalanceToInsert(Node nodeInput, int element)
+        {
+
+            (Node node, int balanceValue) = NodeBalanceAndUpdateHeight(nodeInput);
+
+            if (balanceValue > 1)
+            {
+                if (element < node.LeftNode.Element)
+                {
+                    return RightRotate(node);
+                }
+                else if (element > node.LeftNode.Element)
+                {
+                    node.SetLeftNode(LeftRotate(node.LeftNode));
+                    return RightRotate(node);
+                }
+            }
+            if (balanceValue < -1)
+            {
+                if (element > node.RightNode.Element)
+                {
+                    return LeftRotate(node);
+                }
+                else if (element < node.RightNode.Element)
+                {
+                    node.SetRightNode(RightRotate(node.RightNode));
+                    return LeftRotate(node);
+                }
+            }
+            return node;
+        }
+
+        /// <summary>
+        /// Remover o node passado por parâmetro e mover seus filhos.
+        /// </summary>
+        /// <param name="node">Nodo a ser deletado da árvore</param>
+        /// <returns>Nodo a ser posicionado no local do deletado</returns>
+        private Node DeleteNodeAccordingChildren(Node node)
+        {
+            Node aux;
+            if (node.LeftNode == null || node.RightNode == null)
+            {
+                if (node.LeftNode != null)
+                {
+                    aux = node.LeftNode;
+                }
+                else
+                {
+                    aux = node.RightNode;
+                }
+
+                if (aux == null)
+                {
+                    node = null;
+                }
+                else
+                {
+                    node = aux;
+                }
+            }
+            else
+            {
+                aux = NodeWithMinimumValue(node.RightNode);
+                node.SetElement(aux.Element);
+                node.SetRightNode(DeleteNode(node.RightNode, aux.Element)); ;
+            }
+
+            return node;
+        }
+
+        /// <summary>
+        /// Efetuar o balanceamento da árvore após deleção.
+        /// </summary>
+        /// <param name="nodeInput">Nodo base para o balanceamento</param>
+        /// <returns>Árvore balanceada a partir do nodo informado</returns>
+        private Node TreeBalanceToDelete(Node nodeInput)
+        {
+            (Node node, int balanceValue) = NodeBalanceAndUpdateHeight(nodeInput);
+
+            if (balanceValue > 1)
+            {
+                if (NodeBalance(node.LeftNode) >= 0)
+                {
+                    return RightRotate(node);
+                }
+                else
+                {
+                    node.SetLeftNode(LeftRotate(node.LeftNode));
+                    return RightRotate(node);
+                }
+            }
+            else if (balanceValue < -1)
+            {
+                if (NodeBalance(node.RightNode) <= 0)
+                {
+                    return LeftRotate(node);
+                }
+                else
+                {
+                    node.SetRightNode(RightRotate(node.RightNode));
+                    return LeftRotate(node);
+                }
+            }
+
+            return node;
+        }        
+
+        /// <summary>
+        /// Calcular a nova altura do nodo.
+        /// </summary>
+        /// <param name="left">Subárvore da esquerda do nodo</param>
+        /// <param name="right">Subárvore da direita do nodo</param>
+        /// <param name="increment">Valor opcional a se incrementar no calcula 
+        /// (quando não informado, incrementará o valor da altura inicial de um nodo)</param>
+        /// <returns>Valor da altura máxima do nodo informado</returns>
+        private int GetMaxHeight(Node left, Node right, int increment = Node.INIT_HEIGHT)
+        {
+            return Math.Max(left != null ? left.Height : 0, right != null ? right.Height : 0) + increment;
+        }
+
+        /// <summary>
+        /// Procurar o nodo com menor valor da árvore.
+        /// </summary>
+        /// <param name="node">Nodo raíz da consulta</param>
+        /// <returns>Nodo que possui o menor valor da árvore</returns>
+        private Node NodeWithMinimumValue(Node node)
+        {
+            Node current = node;
+            while (current.LeftNode != null)
+            {
+                current = current.LeftNode;
+            }
+
+            return current;
+        }
+
+        /// <summary>
+        /// Imprimir a árvore percorrendo em pré-ordem.
+        /// </summary>
+        public void PreOrdem()
+        {
+            PreOrdem(this.Root);
+        }
+
+        /// <summary>
+        /// Imprimir a árvore percorrendo em pré-ordem.
+        /// </summary>
+        /// <param name="node">Nodo raíz para o percurso</param>
+        private void PreOrdem (Node node)
+        {
+            if(node != null)
+            {
+                Console.Write(node.Element + "  ");
+                PreOrdem(node.LeftNode);
+                PreOrdem(node.RightNode);
+            }
+        }
+
+        /// <summary>
+        /// Imprimir a árvore percorrendo Em-Ordem.
+        /// </summary>
+        public void EmOrdem()
+        {
+            EmOrdem(this.Root);
+        }
+
+        /// <summary>
+        /// Imprimir a árvore percorrendo Em-Ordem.
+        /// </summary>
+        /// <param name="node">Nodo raíz para o percurso</param>
+        private void EmOrdem(Node node)
+        {
+            if(node != null)
+            {
+                EmOrdem(node.LeftNode);
+                Console.Write(node.Element + "  ");
+                EmOrdem(node.RightNode);
+            }   
+        }
+
+        /// <summary>
+        /// Imprimir a árvore percorrendo em Pos-Ordem.
+        /// </summary>
+        public void PosOrdem()
+        {
+            PosOrdem(this.Root);
+        }
+
+        /// <summary>
+        /// Imprimir a árvore percorrendo em Pós-Ordem.
+        /// </summary>
+        /// <param name="node">Nodo raíz para o percurso</param>
+        private void PosOrdem(Node node)
+        {
+            if(node != null)
+            {
+                PosOrdem(node.LeftNode);
+                PosOrdem(node.RightNode);
+                Console.Write(node.Element + "  ");
+            }
+        }
+
+        /// <summary>
+        /// Método para imprimir a árvore.
+        /// </summary>
+        public void PrintTree()
+        {
+            PrintTree(this.Root, string.Empty, true);
+        }
+
+        /// <summary>
+        /// Método para imprimir a árvore.
+        /// </summary>
+        /// <param name="currPrt">Node atual da impressão</param>
+        /// <param name="indent">identação utilizada para a escrita em tela</param>
+        /// <param name="last">Flag que indica se o nó atual é o último</param>
+        private void PrintTree(Node currPrt, string indent, bool last)
+        {
+            if(currPrt != null)
+            {
+                Console.Write(indent);
+                if (indent.Equals(string.Empty))
+                {
+                    Console.Write("Root-");
+                    indent += "   ";
+                }
+                else if (last)
+                {
+                    Console.Write("R----");
+                    indent += "   ";
+                }
+                else
+                {
+                    Console.Write("L----");
+                    indent += "|   ";
+                }
+                Console.WriteLine(currPrt.Element);
+                PrintTree(currPrt.LeftNode, indent, false);
+                PrintTree(currPrt.RightNode, indent, true);
+            }
+        }
+    }
+}
