@@ -7,13 +7,13 @@ namespace AVL_Tree.Structure.Interfaces
         /// <summary>
         /// Método para alterar o valor do elemento do nodo.
         /// </summary>
-        /// <param name="element">Valor novo</param>
+        /// <param name="element">Novo elemento do nodo</param>
         void SetElement(int element);
 
         /// <summary>
         /// Método para alterar a altura do nodo.
         /// </summary>
-        /// <param name="height">Valor da nova altura</param>
+        /// <param name="height">Nova altura do nodo</param>
         void SetHeight(int height);
 
         /// <summary>
@@ -27,6 +27,24 @@ namespace AVL_Tree.Structure.Interfaces
         /// </summary>
         /// <param name="rightNode">Referência da nova subárvore direita do nodo</param>
         void SetRightNode(Node rightNode);
+
+        /// <summary>
+        /// Calcular o fator de balanceamento do nodo.
+        /// </summary>
+        /// <returns>Valor do balanceamento do nodo</returns>
+        int NodeBalance();
+
+        /// <summary>
+        /// Calcular o fator de balanceamento e atualizar a altura do nodo.
+        /// </summary>
+        /// <returns>Nodo com a altura atualizada e o valor do seu fator de balanceamento</returns>
+        (Node, int) NodeBalanceAndUpdateHeight();
+
+        /// <summary>
+        /// Obtém a altura da maior subárvore do nodo.
+        /// </summary>
+        /// <returns>Altura da maior subárvore do nodo</returns>
+        int GetHeightOfLargestSubtree();
 
         /// <summary>
         /// Método para imprimir o nodo de forma simples.

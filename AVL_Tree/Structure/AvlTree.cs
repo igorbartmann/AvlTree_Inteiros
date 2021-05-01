@@ -66,7 +66,7 @@ namespace AVL_Tree.Structure
                 return node;
             }
 
-            return TreeBalanceToInsert(node, element);
+            return TreeBalanceAfterInsert(node, element);
         }
 
         /// <summary>
@@ -137,7 +137,7 @@ namespace AVL_Tree.Structure
                 return null;
             }
 
-            return TreeBalanceToDelete(node);
+            return TreeBalanceAfterDelete(node);
         }
 
         /// <summary>
@@ -151,8 +151,8 @@ namespace AVL_Tree.Structure
             Node T2 = T1.LeftNode;
             T1.SetLeftNode(node);
             node.SetRightNode(T2);
-            node.SetHeight(GetMaxHeight(node.LeftNode, node.RightNode));
-            T1.SetHeight(GetMaxHeight(T1.LeftNode, T1.RightNode));
+            node.SetHeight(node.GetHeightOfLargestSubtree());
+            T1.SetHeight(T1.GetHeightOfLargestSubtree());
             return T1;
         }
 
@@ -167,41 +167,9 @@ namespace AVL_Tree.Structure
             Node T2 = T1.RightNode;
             T1.SetRightNode(node);
             node.SetLeftNode(T2);
-            T1.SetHeight(GetMaxHeight(T1.LeftNode, T1.RightNode));
-            node.SetHeight(GetMaxHeight(node.LeftNode, node.RightNode));
+            T1.SetHeight(T1.GetHeightOfLargestSubtree());
+            node.SetHeight(node.GetHeightOfLargestSubtree());
             return T1;
-        }
-
-        /// <summary>
-        /// Calcula o valor de balanceamento atual do nodo.
-        /// </summary>
-        /// <param name="node">Nodo sobre o qual o calculo será realizado</param>
-        /// <returns>Valor do balanceamento do nodo</returns>
-        private int NodeBalance(Node node)
-        {
-            if (node == null)
-            {
-                return 0;
-            }
-
-            return (node.LeftNode != null ? node.LeftNode.Height : 0) - (node.RightNode != null ? node.RightNode.Height : 0);
-        }
-
-        /// <summary>
-        /// Atualizar a altura e calcular o valor do balanceamento do nodo.
-        /// </summary>
-        /// <param name="node">Nodo a ser atualizado e sobre o qual o calculo será feito</param>
-        /// <returns>Nodo com a altura atualizada e o seu valor de balanceamento</returns>
-        private (Node, int) NodeBalanceAndUpdateHeight(Node node)
-        {
-            if (node == null)
-            {
-                return (null, 0);
-            }
-
-            int balanceValue = NodeBalance(node);
-            node.SetHeight(GetMaxHeight(node.LeftNode, node.RightNode));
-            return (node, balanceValue);
         }
 
         /// <summary>
@@ -210,10 +178,10 @@ namespace AVL_Tree.Structure
         /// <param name="nodeInput">Nodo base para o balanceamento</param>
         /// <param name="element">Valor que se deseja inserir na árvore</param>
         /// <returns>Árvore balanceada a partir do nodo informado</returns>
-        private Node TreeBalanceToInsert(Node nodeInput, int element)
+        private Node TreeBalanceAfterInsert(Node nodeInput, int element)
         {
 
-            (Node node, int balanceValue) = NodeBalanceAndUpdateHeight(nodeInput);
+            (Node node, int balanceValue) = nodeInput.NodeBalanceAndUpdateHeight();
 
             if (balanceValue > 1)
             {
@@ -239,6 +207,43 @@ namespace AVL_Tree.Structure
                     return LeftRotate(node);
                 }
             }
+            return node;
+        }
+
+        /// <summary>
+        /// Efetuar o balanceamento da árvore após deleção.
+        /// </summary>
+        /// <param name="nodeInput">Nodo base para o balanceamento</param>
+        /// <returns>Árvore balanceada a partir do nodo informado</returns>
+        private Node TreeBalanceAfterDelete(Node nodeInput)
+        {
+            (Node node, int balanceValue) = nodeInput.NodeBalanceAndUpdateHeight();
+
+            if (balanceValue > 1)
+            {
+                if (node.LeftNode.NodeBalance() >= 0)
+                {
+                    return RightRotate(node);
+                }
+                else
+                {
+                    node.SetLeftNode(LeftRotate(node.LeftNode));
+                    return RightRotate(node);
+                }
+            }
+            else if (balanceValue < -1)
+            {
+                if (node.RightNode.NodeBalance() <= 0)
+                {
+                    return LeftRotate(node);
+                }
+                else
+                {
+                    node.SetRightNode(RightRotate(node.RightNode));
+                    return LeftRotate(node);
+                }
+            }
+
             return node;
         }
 
@@ -278,56 +283,6 @@ namespace AVL_Tree.Structure
             }
 
             return node;
-        }
-
-        /// <summary>
-        /// Efetuar o balanceamento da árvore após deleção.
-        /// </summary>
-        /// <param name="nodeInput">Nodo base para o balanceamento</param>
-        /// <returns>Árvore balanceada a partir do nodo informado</returns>
-        private Node TreeBalanceToDelete(Node nodeInput)
-        {
-            (Node node, int balanceValue) = NodeBalanceAndUpdateHeight(nodeInput);
-
-            if (balanceValue > 1)
-            {
-                if (NodeBalance(node.LeftNode) >= 0)
-                {
-                    return RightRotate(node);
-                }
-                else
-                {
-                    node.SetLeftNode(LeftRotate(node.LeftNode));
-                    return RightRotate(node);
-                }
-            }
-            else if (balanceValue < -1)
-            {
-                if (NodeBalance(node.RightNode) <= 0)
-                {
-                    return LeftRotate(node);
-                }
-                else
-                {
-                    node.SetRightNode(RightRotate(node.RightNode));
-                    return LeftRotate(node);
-                }
-            }
-
-            return node;
-        }        
-
-        /// <summary>
-        /// Calcular a nova altura do nodo.
-        /// </summary>
-        /// <param name="left">Subárvore da esquerda do nodo</param>
-        /// <param name="right">Subárvore da direita do nodo</param>
-        /// <param name="increment">Valor opcional a se incrementar no calcula 
-        /// (quando não informado, incrementará o valor da altura inicial de um nodo)</param>
-        /// <returns>Valor da altura máxima do nodo informado</returns>
-        private int GetMaxHeight(Node left, Node right, int increment = Node.INIT_HEIGHT)
-        {
-            return Math.Max(left != null ? left.Height : 0, right != null ? right.Height : 0) + increment;
         }
 
         /// <summary>
@@ -391,7 +346,7 @@ namespace AVL_Tree.Structure
         }
 
         /// <summary>
-        /// Imprimir a árvore percorrendo em Pos-Ordem.
+        /// Imprimir a árvore percorrendo em Pós-Ordem.
         /// </summary>
         public void PosOrdem()
         {
@@ -425,8 +380,8 @@ namespace AVL_Tree.Structure
         /// </summary>
         /// <param name="currPrt">Node atual da impressão</param>
         /// <param name="indent">identação utilizada para a escrita em tela</param>
-        /// <param name="last">Flag que indica se o nó atual é o último</param>
-        private void PrintTree(Node currPrt, string indent, bool last)
+        /// <param name="rightPath">Flag que indica se o nó atual é para o lado direito da subárvore analisada</param>
+        private void PrintTree(Node currPrt, string indent, bool rightPath)
         {
             if(currPrt != null)
             {
@@ -436,7 +391,7 @@ namespace AVL_Tree.Structure
                     Console.Write("Root-");
                     indent += "   ";
                 }
-                else if (last)
+                else if (rightPath)
                 {
                     Console.Write("R----");
                     indent += "   ";
