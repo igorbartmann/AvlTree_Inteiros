@@ -346,7 +346,7 @@ namespace AVL_Tree.Structure
         }
 
         /// <summary>
-        /// Imprimir a árvore percorrendo em Pos-Ordem.
+        /// Imprimir a árvore percorrendo em Pós-Ordem.
         /// </summary>
         public void PosOrdem()
         {
@@ -380,8 +380,8 @@ namespace AVL_Tree.Structure
         /// </summary>
         /// <param name="currPrt">Node atual da impressão</param>
         /// <param name="indent">identação utilizada para a escrita em tela</param>
-        /// <param name="last">Flag que indica se o nó atual é o último</param>
-        private void PrintTree(Node currPrt, string indent, bool last)
+        /// <param name="rightPath">Flag que indica se o nó atual é para o lado direito da subárvore analisada</param>
+        private void PrintTree(Node currPrt, string indent, bool rightPath)
         {
             if(currPrt != null)
             {
@@ -391,7 +391,7 @@ namespace AVL_Tree.Structure
                     Console.Write("Root-");
                     indent += "   ";
                 }
-                else if (last)
+                else if (rightPath)
                 {
                     Console.Write("R----");
                     indent += "   ";
