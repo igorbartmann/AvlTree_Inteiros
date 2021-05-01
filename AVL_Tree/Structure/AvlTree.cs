@@ -66,7 +66,7 @@ namespace AVL_Tree.Structure
                 return node;
             }
 
-            return TreeBalanceToInsert(node, element);
+            return TreeBalanceAfterInsert(node, element);
         }
 
         /// <summary>
@@ -137,7 +137,7 @@ namespace AVL_Tree.Structure
                 return null;
             }
 
-            return TreeBalanceToDelete(node);
+            return TreeBalanceAfterDelete(node);
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace AVL_Tree.Structure
         /// <param name="nodeInput">Nodo base para o balanceamento</param>
         /// <param name="element">Valor que se deseja inserir na árvore</param>
         /// <returns>Árvore balanceada a partir do nodo informado</returns>
-        private Node TreeBalanceToInsert(Node nodeInput, int element)
+        private Node TreeBalanceAfterInsert(Node nodeInput, int element)
         {
 
             (Node node, int balanceValue) = nodeInput.NodeBalanceAndUpdateHeight();
@@ -215,7 +215,7 @@ namespace AVL_Tree.Structure
         /// </summary>
         /// <param name="nodeInput">Nodo base para o balanceamento</param>
         /// <returns>Árvore balanceada a partir do nodo informado</returns>
-        private Node TreeBalanceToDelete(Node nodeInput)
+        private Node TreeBalanceAfterDelete(Node nodeInput)
         {
             (Node node, int balanceValue) = nodeInput.NodeBalanceAndUpdateHeight();
 

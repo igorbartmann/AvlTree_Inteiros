@@ -29,15 +29,15 @@ namespace AVL_Tree.Structure.Interfaces
         void SetRightNode(Node rightNode);
 
         /// <summary>
-        /// Calcula o valor de balanceamento atual do nodo.
+        /// Calcular o fator de balanceamento do nodo.
         /// </summary>
         /// <returns>Valor do balanceamento do nodo</returns>
         int NodeBalance();
 
         /// <summary>
-        /// Calcular o valor do balanceamento atual e atualiza a altura do nodo.
+        /// Calcular o fator de balanceamento e atualizar a altura do nodo.
         /// </summary>
-        /// <returns>Nodo com a altura atualizada e o valor do seu balanceamento</returns>
+        /// <returns>Nodo com a altura atualizada e o valor do seu fator de balanceamento</returns>
         (Node, int) NodeBalanceAndUpdateHeight();
 
         /// <summary>
