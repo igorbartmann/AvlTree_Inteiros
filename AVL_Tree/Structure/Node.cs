@@ -26,7 +26,7 @@ namespace AVL_Tree.Structure
         /// <summary>
         /// Método para alterar o valor do elemento do nodo.
         /// </summary>
-        /// <param name="element">Valor novo</param>
+        /// <param name="element">Novo elemento do nodo</param>
         public void SetElement(int element)
         {
             this.Element = element;
@@ -35,7 +35,7 @@ namespace AVL_Tree.Structure
         /// <summary>
         /// Método para alterar a altura do nodo.
         /// </summary>
-        /// <param name="height">Valor da nova altura</param>
+        /// <param name="height">Nova altura do nodo</param>
         public void SetHeight(int height)
         {
             this.Height = height;
@@ -57,6 +57,45 @@ namespace AVL_Tree.Structure
         public void SetRightNode(Node rightNode)
         {
             this.RightNode = rightNode;
+        }
+
+        /// <summary>
+        /// Calcula o valor de balanceamento atual do nodo.
+        /// </summary>
+        /// <returns>Valor do balanceamento do nodo</returns>
+        public int NodeBalance()
+        {
+            if (this == null)
+            {
+                return 0;
+            }
+
+            return (this.LeftNode != null ? this.LeftNode.Height : 0) - (this.RightNode != null ? this.RightNode.Height : 0);
+        }
+
+        /// <summary>
+        /// Calcular o valor do balanceamento atual e atualizar a altura do nodo.
+        /// </summary>
+        /// <returns>Nodo com a altura atualizada e o valor do seu balanceamento</returns>
+        public (Node, int) NodeBalanceAndUpdateHeight()
+        {
+            if (this == null)
+            {
+                return (null, 0);
+            }
+
+            int balanceValue = this.NodeBalance();
+            this.SetHeight(this.GetHeightOfLargestSubtree());
+            return (this, balanceValue);
+        }
+
+        /// <summary>
+        /// Obtém a altura da maior subárvore do nodo.
+        /// </summary>
+        /// <returns>Altura da maior subárvore do nodo</returns>
+        public int GetHeightOfLargestSubtree()
+        {
+            return Math.Max(this.LeftNode != null ? this.LeftNode.Height : 0, this.RightNode != null ? this.RightNode.Height : 0) + INIT_HEIGHT;
         }
 
         /// <summary>

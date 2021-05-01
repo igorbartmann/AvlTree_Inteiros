@@ -24,7 +24,7 @@ namespace AVL_Tree.Structure.Interfaces
         Node FindNode(int element);
 
         /// <summary>
-        /// Deletar um valor da árvore através do seu valor.
+        /// Deletar um elemento da árvore através do seu valor.
         /// </summary>
         /// <param name="element">Valor a ser deletado da árvore</param>
         void DeleteNode(int element);

@@ -151,8 +151,8 @@ namespace AVL_Tree.Structure
             Node T2 = T1.LeftNode;
             T1.SetLeftNode(node);
             node.SetRightNode(T2);
-            node.SetHeight(GetMaxHeight(node.LeftNode, node.RightNode));
-            T1.SetHeight(GetMaxHeight(T1.LeftNode, T1.RightNode));
+            node.SetHeight(node.GetHeightOfLargestSubtree());
+            T1.SetHeight(T1.GetHeightOfLargestSubtree());
             return T1;
         }
 
@@ -167,41 +167,9 @@ namespace AVL_Tree.Structure
             Node T2 = T1.RightNode;
             T1.SetRightNode(node);
             node.SetLeftNode(T2);
-            T1.SetHeight(GetMaxHeight(T1.LeftNode, T1.RightNode));
-            node.SetHeight(GetMaxHeight(node.LeftNode, node.RightNode));
+            T1.SetHeight(T1.GetHeightOfLargestSubtree());
+            node.SetHeight(node.GetHeightOfLargestSubtree());
             return T1;
-        }
-
-        /// <summary>
-        /// Calcula o valor de balanceamento atual do nodo.
-        /// </summary>
-        /// <param name="node">Nodo sobre o qual o calculo será realizado</param>
-        /// <returns>Valor do balanceamento do nodo</returns>
-        private int NodeBalance(Node node)
-        {
-            if (node == null)
-            {
-                return 0;
-            }
-
-            return (node.LeftNode != null ? node.LeftNode.Height : 0) - (node.RightNode != null ? node.RightNode.Height : 0);
-        }
-
-        /// <summary>
-        /// Atualizar a altura e calcular o valor do balanceamento do nodo.
-        /// </summary>
-        /// <param name="node">Nodo a ser atualizado e sobre o qual o calculo será feito</param>
-        /// <returns>Nodo com a altura atualizada e o seu valor de balanceamento</returns>
-        private (Node, int) NodeBalanceAndUpdateHeight(Node node)
-        {
-            if (node == null)
-            {
-                return (null, 0);
-            }
-
-            int balanceValue = NodeBalance(node);
-            node.SetHeight(GetMaxHeight(node.LeftNode, node.RightNode));
-            return (node, balanceValue);
         }
 
         /// <summary>
@@ -213,7 +181,7 @@ namespace AVL_Tree.Structure
         private Node TreeBalanceToInsert(Node nodeInput, int element)
         {
 
-            (Node node, int balanceValue) = NodeBalanceAndUpdateHeight(nodeInput);
+            (Node node, int balanceValue) = nodeInput.NodeBalanceAndUpdateHeight();
 
             if (balanceValue > 1)
             {
@@ -249,11 +217,11 @@ namespace AVL_Tree.Structure
         /// <returns>Árvore balanceada a partir do nodo informado</returns>
         private Node TreeBalanceToDelete(Node nodeInput)
         {
-            (Node node, int balanceValue) = NodeBalanceAndUpdateHeight(nodeInput);
+            (Node node, int balanceValue) = nodeInput.NodeBalanceAndUpdateHeight();
 
             if (balanceValue > 1)
             {
-                if (NodeBalance(node.LeftNode) >= 0)
+                if (node.LeftNode.NodeBalance() >= 0)
                 {
                     return RightRotate(node);
                 }
@@ -265,7 +233,7 @@ namespace AVL_Tree.Structure
             }
             else if (balanceValue < -1)
             {
-                if (NodeBalance(node.RightNode) <= 0)
+                if (node.RightNode.NodeBalance() <= 0)
                 {
                     return LeftRotate(node);
                 }
@@ -315,19 +283,6 @@ namespace AVL_Tree.Structure
             }
 
             return node;
-        }
-
-        /// <summary>
-        /// Calcular a nova altura do nodo.
-        /// </summary>
-        /// <param name="left">Subárvore da esquerda do nodo</param>
-        /// <param name="right">Subárvore da direita do nodo</param>
-        /// <param name="increment">Valor opcional a se incrementar no calcula 
-        /// (quando não informado, incrementará o valor da altura inicial de um nodo)</param>
-        /// <returns>Valor da altura máxima do nodo informado</returns>
-        private int GetMaxHeight(Node left, Node right, int increment = Node.INIT_HEIGHT)
-        {
-            return Math.Max(left != null ? left.Height : 0, right != null ? right.Height : 0) + increment;
         }
 
         /// <summary>
