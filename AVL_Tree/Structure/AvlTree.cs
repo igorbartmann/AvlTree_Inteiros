@@ -243,6 +243,43 @@ namespace AVL_Tree.Structure
         }
 
         /// <summary>
+        /// Efetuar o balanceamento da árvore após deleção.
+        /// </summary>
+        /// <param name="nodeInput">Nodo base para o balanceamento</param>
+        /// <returns>Árvore balanceada a partir do nodo informado</returns>
+        private Node TreeBalanceToDelete(Node nodeInput)
+        {
+            (Node node, int balanceValue) = NodeBalanceAndUpdateHeight(nodeInput);
+
+            if (balanceValue > 1)
+            {
+                if (NodeBalance(node.LeftNode) >= 0)
+                {
+                    return RightRotate(node);
+                }
+                else
+                {
+                    node.SetLeftNode(LeftRotate(node.LeftNode));
+                    return RightRotate(node);
+                }
+            }
+            else if (balanceValue < -1)
+            {
+                if (NodeBalance(node.RightNode) <= 0)
+                {
+                    return LeftRotate(node);
+                }
+                else
+                {
+                    node.SetRightNode(RightRotate(node.RightNode));
+                    return LeftRotate(node);
+                }
+            }
+
+            return node;
+        }
+
+        /// <summary>
         /// Remover o node passado por parâmetro e mover seus filhos.
         /// </summary>
         /// <param name="node">Nodo a ser deletado da árvore</param>
@@ -279,43 +316,6 @@ namespace AVL_Tree.Structure
 
             return node;
         }
-
-        /// <summary>
-        /// Efetuar o balanceamento da árvore após deleção.
-        /// </summary>
-        /// <param name="nodeInput">Nodo base para o balanceamento</param>
-        /// <returns>Árvore balanceada a partir do nodo informado</returns>
-        private Node TreeBalanceToDelete(Node nodeInput)
-        {
-            (Node node, int balanceValue) = NodeBalanceAndUpdateHeight(nodeInput);
-
-            if (balanceValue > 1)
-            {
-                if (NodeBalance(node.LeftNode) >= 0)
-                {
-                    return RightRotate(node);
-                }
-                else
-                {
-                    node.SetLeftNode(LeftRotate(node.LeftNode));
-                    return RightRotate(node);
-                }
-            }
-            else if (balanceValue < -1)
-            {
-                if (NodeBalance(node.RightNode) <= 0)
-                {
-                    return LeftRotate(node);
-                }
-                else
-                {
-                    node.SetRightNode(RightRotate(node.RightNode));
-                    return LeftRotate(node);
-                }
-            }
-
-            return node;
-        }        
 
         /// <summary>
         /// Calcular a nova altura do nodo.
