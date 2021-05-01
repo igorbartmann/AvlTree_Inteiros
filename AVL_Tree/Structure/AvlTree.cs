@@ -147,13 +147,13 @@ namespace AVL_Tree.Structure
         /// <returns>Nodo com a rotação efetuada sobre ele</returns>
         private Node LeftRotate(Node node)
         {
-            Node x = node.RightNode;
-            Node T2 = x.LeftNode;
-            x.SetLeftNode(node);
+            Node T1 = node.RightNode;
+            Node T2 = T1.LeftNode;
+            T1.SetLeftNode(node);
             node.SetRightNode(T2);
             node.SetHeight(GetMaxHeight(node.LeftNode, node.RightNode));
-            x.SetHeight(GetMaxHeight(x.LeftNode, x.RightNode));
-            return x;
+            T1.SetHeight(GetMaxHeight(T1.LeftNode, T1.RightNode));
+            return T1;
         }
 
         /// <summary>
@@ -163,13 +163,13 @@ namespace AVL_Tree.Structure
         /// <returns>Nodo com a rotação efetuada sobre ele</returns>
         private Node RightRotate(Node node)
         {
-            Node x = node.LeftNode;
-            Node T2 = x.RightNode;
-            x.SetRightNode(node);
+            Node T1 = node.LeftNode;
+            Node T2 = T1.RightNode;
+            T1.SetRightNode(node);
             node.SetLeftNode(T2);
-            x.SetHeight(GetMaxHeight(x.LeftNode, x.RightNode));
+            T1.SetHeight(GetMaxHeight(T1.LeftNode, T1.RightNode));
             node.SetHeight(GetMaxHeight(node.LeftNode, node.RightNode));
-            return x;
+            return T1;
         }
 
         /// <summary>
